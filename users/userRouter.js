@@ -54,11 +54,51 @@ router.get('/:id', validateUserId, (req, res) => {
   res.status(200).json(req.user);
 });
 
-router.get('/:id/posts', (req, res) => {});
+router.get('/:id/posts', validateUserId, (req, res) => {
+  const { id } = req.user;
+  userDb
+    .getUserPosts(id)
+    .then(posts => {
+      res.status(200).json(posts);
+    })
+    .catch(error => {
+      console.log('GET post by user id error: ', error);
+      res.status(500).json({ message: 'Error retrieving post from database' });
+    });
+});
 
-router.delete('/:id', (req, res) => {});
+router.delete('/:id', validateUserId, (req, res) => {
+  const { id } = req.user;
+  userDb
+    .remove(id)
+    .then(() => {
+      res.status(200).json({ message: 'User deleted from database' });
+    })
+    .catch(error => {
+      console.log('Error deleting user, ', error);
+      res.status(500).json({
+        message: 'There was an error deleting that user from the database'
+      });
+    });
+});
 
-router.put('/:id', (req, res) => {});
+router.put('/:id', validateUserId, validateUser, (req, res) => {
+  const { id } = req.user;
+  const users = req.body;
+  console.log(users);
+  userDb
+    .update(id, users)
+    .then(success => {
+      console.log(success);
+      res.status(200).json({ message: 'successfully updated user' });
+    })
+    .catch(error => {
+      console.log('Error updating user, ', error);
+      res.status(500).json({
+        message: 'There was an error updating the user in the database'
+      });
+    });
+});
 
 //custom middleware
 
