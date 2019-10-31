@@ -8,7 +8,6 @@ router.post('/', (req, res) => {
   userDb
     .insert({ name })
     .then(user => {
-      console.log(user);
       res.status(201).send(user);
     })
     .catch(error => {
