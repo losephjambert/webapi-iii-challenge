@@ -1,8 +1,22 @@
 const express = require('express');
+const userDb = require('./userDb.js');
 
 const router = express.Router();
 
-router.post('/', (req, res) => {});
+router.post('/', (req, res) => {
+  const { name } = req.body;
+  userDb
+    .insert({ name })
+    .then(user => {
+      console.log(user);
+      res.status(201).send(user);
+    })
+    .catch(error => {
+      res
+        .status(500)
+        .send({ message: 'There was a dang error creating the user.' });
+    });
+});
 
 router.post('/:id/posts', (req, res) => {});
 
